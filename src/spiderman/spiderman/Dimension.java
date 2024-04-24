@@ -6,10 +6,15 @@ public class Dimension {
     private Dimension nextNode;
     private ArrayList<Dimension> clusterLink;
     private ArrayList<Dimension> adjacencyList = new ArrayList<Dimension>();
+    private ArrayList<Dimension> bfsPath = new ArrayList<Dimension>();
     private ArrayList<Person> guestList;
     private int dimensionNumber;
     private int dimensionWeight;
     private int cannonEvents;
+    private boolean marked = false;
+
+    private int numOfAnomalies = 0;
+    private boolean containSpider = false;
 
 
     public Dimension(Dimension nextNode, int dimensionNumber, int dimensionWeight, int cannonEvents){
@@ -62,6 +67,7 @@ public class Dimension {
     // guestList:
     public void addGuest(Person person){
         guestList.add(person);
+        statusUpdate();
     }
 
     public void removeGuest(Person person){
@@ -71,6 +77,11 @@ public class Dimension {
                 return;
             }
         }
+        statusUpdate();
+    }
+
+    public boolean containSpider(){
+        return containSpider;
     }
 
     public ArrayList<Person> getGuestList(){
@@ -82,5 +93,37 @@ public class Dimension {
     }
     public void addToAdjacencyList(Dimension item){
         adjacencyList.add(item);
+    }
+
+    public int getnumberOfAnomalies(){
+        return numOfAnomalies;
+    }
+
+    public void statusUpdate(){
+        if(guestList.size() == 0){
+            numOfAnomalies = 0;
+            containSpider = false;
+        }
+
+        if(guestList.size() > 0){
+            for(Person p : guestList){
+                if(p.getSignature() != dimensionNumber){
+                    numOfAnomalies++;
+                } else {
+                    containSpider = true;
+                }
+            }
+        }
+
+    }
+
+    public ArrayList<Dimension> getbfsPath(){
+        return bfsPath;
+    }
+    public void addToBfsPath(ArrayList<Dimension> prevList){
+        bfsPath.addAll(prevList);
+    }
+    public void addToBfsPath(Dimension prevDim){
+        bfsPath.add(prevDim);
     }
 }

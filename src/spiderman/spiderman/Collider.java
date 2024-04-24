@@ -71,15 +71,15 @@ public class Collider {
 
 
             // Reading Standard Inputs from File:
-            int locationNumber = StdIn.readInt();
+            int currentDimension = StdIn.readInt();
             String name = StdIn.readString();
             int signature = StdIn.readInt();
 
             // Creating a new person Object:
-            Person person = new Person(name, locationNumber, signature);
+            Person person = new Person(name, currentDimension, signature);
 
             // Adds the person:
-            adjacencyList[getPositionIndex(locationNumber)].addGuest(person);
+            adjacencyList[getPositionIndex(currentDimension)].addGuest(person);
         }
     }
     // 

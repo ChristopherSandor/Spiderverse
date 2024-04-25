@@ -167,6 +167,10 @@ public class Collider {
         adjacencyList[dTwoLocation].addToAdjacencyList(dimensionOne);
         adjacencyList[dOneLocation].addToAdjacencyList(dimensionTwo);
 
+        Path path = new Path(dimensionOne, dimensionTwo);
+
+        dimensionOne.addPath(path);
+
     }
     // 
     // 

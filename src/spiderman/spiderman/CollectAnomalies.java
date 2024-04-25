@@ -8,12 +8,16 @@ public class CollectAnomalies {
     private ArrayList<Dimension> marked;
     private Queue<Dimension> order;
     private Collider adjencyList;
+    private int startNumber = 0;
 
     public CollectAnomalies(){
         anomalies = new ArrayList<Person>();
         marked = new ArrayList<Dimension>();
         adjencyList = null;
         order = new Queue<Dimension>();
+    }
+    public int getStartNum(){
+        return startNumber;
     }
 
     public static void main(String[] args) {
@@ -41,6 +45,7 @@ public class CollectAnomalies {
         // Getting starting location (Dimenision Number):
         StdIn.setFile(anomaliesFile);
         int startingLocation = StdIn.readInt();
+        this.startNumber = startingLocation;
 
         // Creates Lists:
         collectAnomalies(startingLocation);
@@ -222,5 +227,9 @@ public class CollectAnomalies {
 
     public ArrayList<Person> getAnomalies(){
         return anomalies;
+    }
+
+    public Collider getCollider(){
+        return adjencyList;
     }
 }

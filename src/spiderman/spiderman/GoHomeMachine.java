@@ -1,4 +1,5 @@
 package spiderman;
+import java.util.*;
 
 /**
  * Steps to implement this class main method:
@@ -51,7 +52,14 @@ package spiderman;
  */
 
 public class GoHomeMachine {
-    
+
+    private ArrayList<Dijkstra> totalPaths;
+    private int numSendingBack = 0;
+
+    public GoHomeMachine(String inputFileName, String outputFileName, Collider collider, int startNumber){
+        totalPaths = new ArrayList<Dijkstra>();
+        readInput(inputFileName, collider, startNumber);
+    }
     public static void main(String[] args) {
 
         if ( args.length < 5 ) {
@@ -60,7 +68,40 @@ public class GoHomeMachine {
                 return;
         }
 
-        // WRITE YOUR CODE HERE
+        CollectAnomalies object = new CollectAnomalies();
+        object.anomaliesDriver(args[0], args[1], args[2], "collected.out");
+
+
+        String inputFileName = args[3];
+        String outputFileName = args[4];
+
+        GoHomeMachine machine = new GoHomeMachine(inputFileName, outputFileName, object.getCollider(), object.getStartNum());
+
+
         
+    }
+
+    private void readInput(String input, Collider collider, int startNumber){
+        StdIn.setFile(input);
+        this.numSendingBack = StdIn.readInt();
+        Dimension[] adjList = collider.getList();
+
+
+        for(int i = 0; i < numSendingBack; i++){
+            String person = StdIn.readString();
+            int dimNumber = StdIn.readInt();
+
+            collider.getPositionIndex(dimNumber);
+            Dimension end = adjList[dimNumber];
+
+            collider.getPositionIndex(startNumber);
+            Dimension start = adjList[startNumber];
+
+            Dijkstra dj = new Dijkstra(start, end);
+
+            totalPaths.add(dj);
+
+        }
+
     }
 }

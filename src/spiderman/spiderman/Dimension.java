@@ -7,6 +7,7 @@ public class Dimension {
     private ArrayList<Dimension> clusterLink;
     private ArrayList<Dimension> adjacencyList = new ArrayList<Dimension>();
     private ArrayList<Dimension> bfsPath = new ArrayList<Dimension>();
+    private ArrayList<Path> pathing = new ArrayList<Path>();
     private ArrayList<Person> guestList;
     private int dimensionNumber;
     private int dimensionWeight;
@@ -125,5 +126,12 @@ public class Dimension {
     }
     public void addToBfsPath(Dimension prevDim){
         bfsPath.add(prevDim);
+    }
+
+    public void addPath(Path path){
+        pathing.add(path);
+    }
+    public ArrayList<Path> getPathing(){
+        return pathing;
     }
 }

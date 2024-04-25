@@ -1,8 +1,6 @@
 package spiderman;
 import java.util.*;
 
-import javax.sound.midi.Track;
-
 public class TrackSpot {
     
     private Collider colliderObject;

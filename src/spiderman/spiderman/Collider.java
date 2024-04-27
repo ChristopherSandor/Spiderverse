@@ -170,6 +170,7 @@ public class Collider {
         Path path = new Path(dimensionOne, dimensionTwo);
 
         dimensionOne.addPath(path);
+        dimensionTwo.addPath(path);
 
     }
     // 

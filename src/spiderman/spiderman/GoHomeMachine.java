@@ -59,6 +59,7 @@ public class GoHomeMachine {
     public GoHomeMachine(String inputFileName, String outputFileName, Collider collider, int startNumber){
         totalPaths = new ArrayList<Dijkstra>();
         readInput(inputFileName, collider, startNumber);
+        readOutput(outputFileName);
     }
     public static void main(String[] args) {
 
@@ -91,11 +92,9 @@ public class GoHomeMachine {
             String person = StdIn.readString();
             int dimNumber = StdIn.readInt();
 
-            collider.getPositionIndex(dimNumber);
-            Dimension end = adjList[dimNumber];
+            Dimension end = adjList[collider.getPositionIndex(dimNumber)];
 
-            collider.getPositionIndex(startNumber);
-            Dimension start = adjList[startNumber];
+            Dimension start = adjList[collider.getPositionIndex(startNumber)];
 
             Dijkstra dj = new Dijkstra(start, end);
 
@@ -104,4 +103,20 @@ public class GoHomeMachine {
         }
 
     }
+
+    private void readOutput(String outputFileName){
+        StdOut.setFile(outputFileName);
+
+        for(Dijkstra x: totalPaths){
+            ArrayList<Path> pList = x.getBestPath();
+
+            for(Path p : pList){
+                StdOut.print(p.getDimensionOne().getDimensionNumber() + p.getDimensionTwo().getDimensionNumber());
+            }
+
+            StdOut.println();
+        }
+    }
+
+
 }

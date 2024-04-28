@@ -55,11 +55,15 @@ public class GoHomeMachine {
 
     private ArrayList<Dijkstra> totalPaths;
     private int numSendingBack = 0;
+    private Collider col;
+    private String outputFile;
 
     public GoHomeMachine(String inputFileName, String outputFileName, Collider collider, int startNumber){
         totalPaths = new ArrayList<Dijkstra>();
-        readInput(inputFileName, collider, startNumber);
-        readOutput(outputFileName);
+        col = collider;
+        this.outputFile = outputFileName;
+
+        readInput(inputFileName, startNumber);
     }
     public static void main(String[] args) {
 
@@ -82,39 +86,77 @@ public class GoHomeMachine {
         
     }
 
-    private void readInput(String input, Collider collider, int startNumber){
+    private void readInput(String input, int startNumber){
         StdIn.setFile(input);
         this.numSendingBack = StdIn.readInt();
-        Dimension[] adjList = collider.getList();
+        Dimension[] adjList = col.getList();
 
+        Dimension startDimension = adjList[col.getPositionIndex(startNumber)];
+        
+
+        Dijkstra searchObject = new Dijkstra(startDimension, null, col);
+
+        ArrayList<String> outputs = new ArrayList<String>();
 
         for(int i = 0; i < numSendingBack; i++){
-            String person = StdIn.readString();
-            int dimNumber = StdIn.readInt();
 
-            Dimension end = adjList[collider.getPositionIndex(dimNumber)];
+            String name = StdIn.readString();
+            Person p = col.getPerson(name);
+            int givenCost = StdIn.readInt();
 
-            Dimension start = adjList[collider.getPositionIndex(startNumber)];
+            ArrayList<Integer> createdPath = searchObject.createPath(p);
+            boolean verdict = (givenCost > findCost(createdPath));
+            String verdictWords;
+            
+            int numOfCannonEvents = adjList[col.getPositionIndex(p.getSignature())].getCannonEvents();
+            if(verdict == false){
+                numOfCannonEvents--;
+                verdictWords = "FAILED";
+            } else {
+                verdictWords = "SUCCESS";
+            }
 
-            Dijkstra dj = new Dijkstra(start, end);
+            String line = (numOfCannonEvents +  " " + p.getName() + " " + verdictWords);
 
-            totalPaths.add(dj);
+            for(int j = 0; j < createdPath.size(); j++){
+                line = line + " " + createdPath.get(j);
+            }
+
+            outputs.add(line);
 
         }
 
+        readOutput(outputs);
+
+
     }
 
-    private void readOutput(String outputFileName){
-        StdOut.setFile(outputFileName);
 
-        for(Dijkstra x: totalPaths){
-            ArrayList<Path> pList = x.getBestPath();
+    private int findCost(ArrayList<Integer> path){
 
-            for(Path p : pList){
-                StdOut.print(p.getDimensionOne().getDimensionNumber() + p.getDimensionTwo().getDimensionNumber());
-            }
+        ArrayList<Dimension> dArray = new ArrayList<Dimension>();
+        Dimension[] adjList = col.getList();
 
-            StdOut.println();
+        int cost = 0;
+
+        for(int i = 0; i < path.size(); i++){
+            dArray.add(adjList[col.getPositionIndex(i)]);
+        }
+
+        for(int i = 0; i < dArray.size(); i++){
+            cost += 2*dArray.get(i).getDimensionWeight();            
+        }
+
+        cost = cost-dArray.get(0).getDimensionWeight() - dArray.get(dArray.size()-1).getDimensionWeight();
+
+        return cost;
+    }
+
+    private void readOutput(ArrayList<String> list){
+        StdOut.setFile(outputFile);
+
+        for(int i = 0; i < list.size(); i++){
+            StdOut.println(list.get(i));
         }
     }
 

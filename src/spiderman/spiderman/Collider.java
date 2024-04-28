@@ -1,12 +1,15 @@
 package spiderman;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.Collections;
 
 public class Collider {
 
     private Dimension[] adjacencyList;
+    private HashMap<String, Person> plist;
 
     public Collider (){
         this.adjacencyList = new Dimension[0];
+        this.plist = new HashMap<>();
     }
 
     public Dimension[] getList(){
@@ -78,9 +81,16 @@ public class Collider {
             // Creating a new person Object:
             Person person = new Person(name, currentDimension, signature);
 
+            plist.put(name, person);
+
             // Adds the person:
             adjacencyList[getPositionIndex(currentDimension)].addGuest(person);
         }
+    }
+
+
+    public Person getPerson(String name){
+        return plist.get(name);
     }
     // 
     // 
@@ -259,9 +269,19 @@ public class Collider {
             StdOut.println();
 
         }
+        
+
+    }
 
 
-
+    public ArrayList<Dimension> getAllDimensions() {
+        if (adjacencyList != null) {
+            ArrayList<Dimension> array = new ArrayList<Dimension>(adjacencyList.length);
+            Collections.addAll(array, adjacencyList);
+            return array;
+        } else {
+            return new ArrayList<Dimension>();
+        }
     }
 
 }

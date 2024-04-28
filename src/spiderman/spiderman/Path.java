@@ -1,7 +1,7 @@
 package spiderman;
 import java.util.*;
 
-public class Path {
+public class Path implements Comparable<Path>{
 
     private Dimension dimOne;
     private Dimension dimTwo;
@@ -44,5 +44,12 @@ public class Path {
             return dimOne;
         }
     }
+
+    @Override
+    public int compareTo(Path other) {
+        return Integer.compare(this.getPathWeight(), other.getPathWeight());
+    }
+
+
     
 }

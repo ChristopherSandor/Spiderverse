@@ -3,106 +3,95 @@ import java.util.*;
 
 public class Dijkstra {
     
-    private ArrayList<Path> currentPath = new ArrayList<Path>();
-    private ArrayList<Path> bestPath = new ArrayList<Path>();
-    private ArrayList<Path> currentMarked = new ArrayList<Path>();
+    // Dimension Number, Distance from point
+    private Hashtable<Integer, Integer> distance = new Hashtable<>();
+    private Hashtable<Integer, Integer> previous = new Hashtable<>();
+    private PriorityQueue<Dimension> pq = new PriorityQueue<>(new Dimension.DimensionComparator());
+    private ArrayList<Dimension> Dvisited = new ArrayList<Dimension>();
+
     private Dimension current;
     private Dimension endDimension;
 
-    public Dijkstra (Dimension startDimension, Dimension endDimension){
+    public Dijkstra (Dimension startDimension, Dimension endDimension, Collider collider){
         this.current = startDimension;
         this.endDimension = endDimension;
+        loadTable(collider);
         DijkstraDriver();
     }
 
+    public void loadTable(Collider collider){
+        Dimension[] array = collider.getList();
+        for(int i = 0; i < array.length; i++){
+            distance.put(array[i].getDimensionNumber(), Integer.MAX_VALUE);
+            previous.put(array[i].getDimensionNumber(), 0);
+        }
+    }
+
     public void DijkstraDriver(){
+
+        previous.put(current.getDimensionNumber(), -1);
+        distance.put(current.getDimensionNumber(), 0);
+
+        
         search(current);
     }
 
-    public ArrayList<Path> getBestPath(){
-        return bestPath;
-    }
+    public void search(Dimension s) {
 
-    public void search(Dimension x){
+        // Adds the source (aka: first element):
+        pq.add(s);
 
-        ArrayList<Path> xPathSorted = sortList(x.getPathing());
+        while(!pq.isEmpty()){
 
-        if(x.getDimensionNumber() == endDimension.getDimensionNumber()){
-            if(calcPathWeight(currentPath) < calcPathWeight(bestPath)){
-                bestPath = setNewList(currentPath);
-                System.out.println("FOUND THIS MF");
-            }
-            return;
-        }
+            Dimension m = pq.poll();
+            Dvisited.add(m);
 
-        for(Path selectedPath : xPathSorted){
+            for(Dimension w : m.getAdjacencyList()){
 
-            if(!currentMarked.contains(selectedPath)){
-                currentMarked.add(selectedPath);
-                currentPath.add(selectedPath);
-
-                Dimension next = selectedPath.otherDimension(x);
-
-                System.out.println("VISTED: " + next.getDimensionNumber());
-                search(next);
-
-                currentMarked.remove(selectedPath);
-                currentPath.remove(selectedPath);
-
-            }
-        }
-
-
-    }
-
-    private ArrayList<Path> sortList(ArrayList<Path> array) {
-        // Create a copy of the original list to avoid modifying it directly
-        ArrayList<Path> temp = new ArrayList<Path>(array);
-        int n = temp.size();
-    
-        // One by one move the boundary of the unsorted subarray
-        for (int i = 0; i < n-1; i++) {
-            // Find the minimum element in the unsorted part
-            int minIndex = i;
-            for (int j = i+1; j < n; j++) {
-                if (temp.get(j).getPathWeight() < temp.get(minIndex).getPathWeight()) {
-                    minIndex = j;
+                if(Dvisited.contains(w)){
+                    continue;
                 }
+
+                // Updates the path value if MAXED
+                if(distance.get(w.getDimensionNumber()) == Integer.MAX_VALUE){
+                    distance.put(w.getDimensionNumber(), (distance.get(m.getDimensionNumber()) + (w.getDimensionWeight() + m.getDimensionWeight())));
+                    w.setDistance((distance.get(m.getDimensionNumber()) + (w.getDimensionWeight() + m.getDimensionWeight())));
+                    pq.add(w);
+                    previous.put(w.getDimensionNumber(), m.getDimensionNumber());
+                } else if(distance.get(w.getDimensionNumber()) > (distance.get(m.getDimensionNumber()) + (w.getDimensionWeight() + m.getDimensionWeight()))){
+                    distance.put(w.getDimensionNumber(), (distance.get(m.getDimensionNumber()) + (w.getDimensionWeight() + m.getDimensionWeight())));
+                    w.setDistance((distance.get(m.getDimensionNumber()) + (w.getDimensionWeight() + m.getDimensionWeight())));
+                    previous.put(w.getDimensionNumber(), m.getDimensionNumber());
+                }
+
             }
-    
-            // Swap the found minimum element with the first element of the unsorted part
-            Path lower = temp.get(minIndex);
-            temp.set(minIndex, temp.get(i));
-            temp.set(i, lower);
-        }
-    
-        return temp;
-    }
-    
-    private ArrayList<Path> setNewList(ArrayList<Path> p){
-        ArrayList<Path> temp = new ArrayList<Path>();
 
-        for(Path pp : p){
-            temp.add(pp);
         }
 
-        return temp;
     }
 
-    // Returns Total weight of the path:
-    private int calcPathWeight(ArrayList<Path> arry){
+    public ArrayList<Integer> createPath(Person p){
 
-        if(arry.isEmpty()){
-            return Integer.MAX_VALUE;
+        ArrayList<Integer> path = new ArrayList<Integer>();
+        int home = p.getSignature();
+
+        int ptr = home;
+        
+        while(ptr != -1){
+            path.add(0, ptr);
+            ptr = previous.get(ptr);
         }
 
-        int total = 0;
-
-        for(Path p: arry){
-            total += p.getPathWeight();
-        }
-
-        return total;
+        return path;
     }
+
+    // public class DimensionComparator implements Comparator<Dimension> {
+    //     public int compare(Dimension d1, Dimension d2) {
+    //         if (distance.get(d1.getDimensionNumber()) > distance.get(d2.getDimensionNumber())) return 1;
+    //         else if (distance.get(d1.getDimensionNumber()) < distance.get(d2.getDimensionNumber())) return -1;
+    //         else return 0;
+    //     }
+    // }
 
 }
+

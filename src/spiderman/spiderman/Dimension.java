@@ -1,5 +1,6 @@
 package spiderman;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class Dimension {
 
@@ -13,6 +14,7 @@ public class Dimension {
     private int dimensionWeight;
     private int cannonEvents;
     private boolean marked = false;
+    private int distance = Integer.MAX_VALUE;
 
     private int numOfAnomalies = 0;
     private boolean containSpider = false;
@@ -27,6 +29,9 @@ public class Dimension {
         this.guestList = new ArrayList<Person>();
     }
 
+    public int getCannonEvents(){
+        return cannonEvents;
+    }
 
     // nextNode:
     public Dimension getNextNode(){
@@ -130,8 +135,38 @@ public class Dimension {
 
     public void addPath(Path path){
         pathing.add(path);
+        // p(path);
+    }
+
+    public void p(Path p){
+ 
+        System.out.println("JOINING " + p.getDimensionOne().getDimensionNumber() + " with " + p.getDimensionTwo().getDimensionNumber() + " PATH WEIGHT: " + p.getPathWeight());
     }
     public ArrayList<Path> getPathing(){
         return pathing;
+    }
+
+    public int getDistance(){
+        return distance;
+    }
+
+
+    public void setDistance(int i){
+        this.distance = i;
+    }
+
+
+    public static class DimensionComparator implements Comparator<Dimension> {
+        @Override
+        public int compare(Dimension d1, Dimension d2) {
+            if (d1.getDistance() > d2.getDistance()){
+                return 1;
+            } else if (d1.getDistance() < d2.getDistance()){
+                return -1;
+            } else {
+                return 0;
+            }
+        }
+
     }
 }
